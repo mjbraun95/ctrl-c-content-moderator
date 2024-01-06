@@ -1,9 +1,17 @@
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from discord.ext import commands
 import openai
 from openai import OpenAI
 import os
 
 OPENAI_TOKEN = os.environ['openai']
+
+# Use the service account
+cred = credentials.Certificate('../firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 class MessageLogger(commands.Cog):
 
@@ -20,6 +28,20 @@ class MessageLogger(commands.Cog):
     
         message1 = Check(message.content)
         hate_info = message1.give_info()  # (categories, category_scores, top_three_dict)
+        if hate_info:
+            # categories, category_scores, top_three_dict
+            print("hate_info: {}".format(hate_info))
+            # print("type(hate_info): {}".format(type(hate_info)))
+            # print("type(hate_info[0]): {}".format(type(hate_info[0])))
+            # print("type(hate_info[1]): {}".format(type(hate_info[1])))
+            # print("type(hate_info[2]): {}".format(type(hate_info[2])))
+            # print("(hate_info[0]): {}".format((hate_info[0])))
+            # print("(hate_info[1]): {}".format((hate_info[1])))
+            # print("(hate_info[2]): {}".format((hate_info[2])))
+            db.collection("messages").document("results").set(hate_info[0]) #categories
+            db.collection("messages").document("category_scores").set(hate_info[1]) #category_scores
+            db.collection("messages").document("top_three_dict").set(hate_info[2]) #top_three_dict
+            # db.collection("users").document("LA").set(data)
 
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
