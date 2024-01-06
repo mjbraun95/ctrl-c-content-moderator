@@ -28,9 +28,10 @@ async def setup(bot):
 class Check:
     def __init__(self, message, username = None, flagged = None):
 
+        self.message = message
         #Calls openai moderator and gathers offensiveness response given the message.
-        client = OpenAI(api_key=OPENAI_TOKEN)
-        self.response = client.moderations.create(input=message)
+        self.client = OpenAI(api_key=OPENAI_TOKEN)
+        self.response = self.client.moderations.create(input=message)
 
     def give_info(self):
 
@@ -41,7 +42,18 @@ class Check:
         flagged = response_dict["results"][0]["flagged"]
 
         if flagged == False:
+        
+            misinformation_check = self.client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": f"Is {self.message} misinformation. Please limit your answer to one word: True or False."}]
+            )
+
+            response = misinformation_check.model_dump()
+
+            print(response)
+        
             return {"flagged": flagged}
+        
         
         #Find categories with scores.
         else:
@@ -69,5 +81,6 @@ class Check:
             print(top_three_dict)
 
 
-            return (categories, category_scores, top_three_dict)
+            return (categories, category_scores, top_three_dict, self.message, self.response)
+        
         
