@@ -18,8 +18,8 @@ class MessageLogger(commands.Cog):
     async def on_message(self, message):
         print(f'Message from {message.author}: {message.content}')
     
-        message1 = Check("I want to kill them.")
-        message1.give_info()
+        message1 = Check(message.content)
+        hate_info = message1.give_info()  # (categories, category_scores, top_three_dict)
 
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
@@ -69,5 +69,5 @@ class Check:
             print(top_three_dict)
 
 
-            return (categories, category_scores)
+            return (categories, category_scores, top_three_dict)
         
