@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.environ['DISCORD_TOKEN']
+DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
+
 PREFIX = '!'
 
 intents = discord.Intents.default()
@@ -31,7 +32,7 @@ async def on_message(self, message):
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start(TOKEN)
+        await bot.start(DISCORD_TOKEN)
 
 
 if __name__ == "__main__":
