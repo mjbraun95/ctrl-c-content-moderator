@@ -6,6 +6,7 @@ import datetime
 import os
 import requests
 import json
+import pytz
 
 OPENAI_TOKEN = os.environ['openai']
 
@@ -45,28 +46,56 @@ class BanCog(commands.Cog):
                         doc_ref.update({"kick_status": False})  # reset kick status
                     except:
                         print("ERROR KICKING")
-#                 elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
-#                     timeout_status = doc_ref.get().to_dict()['timeout_status']
-#                     print(type(timeout_status))
-#                     print(timeout_status)
-#                     print(f"TIMEOUT {member.name}")
-#                     try:
-                        
-#                         delta = datetime.timedelta(
-#                             # days=50,
-#                             # seconds=27,
-#                             # microseconds=10,
-#                             # milliseconds=29000,
-#                             minutes=1,
-#                             # hours=8,
-#                             # weeks=2
-#                         )
-#                         # await member.timeout(delta)
-#                         print(doc_ref.get().to_dict()['timeout_status'])
-#                         print("TIMED OUT!")
-#                         # doc_ref.update({"timeout_status": False})  # reset timeout status
-#                     except:
-#                         print("ERROR TIMING OUT")
+                elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
+                    print("test")
+                    # Assuming you have a Firestore timestamp
+                    timeout_status = doc_ref.get().to_dict()['timeout_status']
+                    # print(type(timeout_status))
+                    print(timeout_status)
+
+                    current_datetime = datetime.datetime.utcnow()
+                    edmonton_timezone = pytz.timezone('America/Edmonton')
+                    current_datetime = current_datetime.replace(tzinfo=pytz.utc).astimezone(edmonton_timezone)
+                    print("Current datetime in Edmonton:", current_datetime)
+
+                    # Calculate timedelta
+                    timedelta_difference = timeout_status- current_datetime
+                    days_difference = timedelta_difference.days
+                    seconds_difference = timedelta_difference.seconds
+                    microseconds_difference = timedelta_difference.microseconds
+                    print(f"Days: {days_difference}, Seconds: {seconds_difference}, Microseconds: {microseconds_difference}")
+                    
+                    if timeout_status > current_datetime:                        
+                        try:
+                            print(f"TIMEOUT {member.name}")
+                            await member.timeout(timedelta_difference)
+                            print("TIMED OUT!")
+                            # doc_ref.update({"timeout_status": False})  # reset timeout status
+                        except Exception as e:
+                            print(e)
+                            print("ERROR TIMING OUT")
+        # # Specify the collection reference and the field to filter on
+        collection_ref = db.collection('messages')
+        field_name = 'mod_deleted'
+
+        # Query for documents where the specified field is true
+        query = collection_ref.where(field_name, '==', True).stream()
+
+        # Iterate through the documents
+        for document in query:
+            # Access document data using .to_dict()
+            data = document.to_dict()
+            message_id = data["message_id"]
+            print(f"Document ID: {message_id}, Field Value: {data[field_name]}")
+            # if data[field_name]:
+            channel_id = 1193291460813013016  # Replace with your channel ID
+            channel = self.bot.get_channel(channel_id)
+            msg = await channel.fetch_message(message_id)
+            await msg.delete()
+            print("DELETED MESSAGE")
+            db.collection("messages").document(document.id).delete()
+            print("DELETED DOCUMENT")
+            # doc_ref = db.collection('messages').document(document.id)
                             
 
 class MessageLogger(commands.Cog):
@@ -84,7 +113,7 @@ class MessageLogger(commands.Cog):
     
         message1 = Check(message.content)
         hate_info = message1.hating_info()  # (categories, category_scores, top_three_dict)
-        misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
+        # misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
         
         if hate_info != False:
             message_dict = dict()
@@ -95,31 +124,34 @@ class MessageLogger(commands.Cog):
             message_dict["categories"] = hate_info[0]
             message_dict["category_scores"] = hate_info[1]
             message_dict["top_three_dict"] = hate_info[2]
+            message_dict["mod_deleted"] = False
+            message_dict["message_id"] = message.id
             # message_dict["1st_violation_percentage"] = hate_info[3]
             # message_dict["2nd_violation_percentage"] = hate_info[4]
             # message_dict["3rd_violation_percentage"] = hate_info[5]
             db.collection("messages").document(message_id).set(message_dict)
-            #print("hate message logged")
+            print("hate message logged")
             
             db.collection("users")
             user_ref = db.collection("users").document(message.author.name)
             user_ref.update({"number_of_messages_flagged_with_hate_speech": firestore.Increment(1)})
-            #print("hate user logged")
+            print("hate user logged")
             
-        elif misinformation_info != True:
-            message_dict = dict()
-            message_id = str(message.created_at)
-            message_dict["username"] = message.author.name
-            message_dict["message"] = message.content
-            message_dict["timestamp"] = str(message.created_at)
-            message_dict["misinformation"] = "True"
-            db.collection("messages").document(message_id).set(message_dict)
-            #print("misinformation message logged")
+        # elif misinformation_info != True:
+        #     message_dict = dict()
+        #     message_id = str(message.created_at)
+        #     message_dict["username"] = message.author.name
+        #     message_dict["message"] = message.content
+        #     message_dict["timestamp"] = str(message.created_at)
+        #     message_dict["misinformation"] = "True"
+        #     message_dict["mod_deleted"] = False
+        #     db.collection("messages").document(message_id).set(message_dict)
+        #     #print("misinformation message logged")
             
-            db.collection("users")
-            user_ref = db.collection("users").document(message.author.name)
-            user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
-            #print("misinformation user logged")
+        #     db.collection("users")
+        #     user_ref = db.collection("users").document(message.author.name)
+        #     user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
+        #     #print("misinformation user logged")
             
     @commands.Cog.listener()
     async def on_ready(self):
@@ -149,7 +181,10 @@ class MessageLogger(commands.Cog):
                 'id': member.id,
                 'discriminator': member.discriminator,
                 'number_of_messages_flagged_with_misinformation': 0, 
-                'number_of_messages_flagged_with_hate_speech': 0 
+                'number_of_messages_flagged_with_hate_speech': 0,
+                'ban_status': False,
+                'ban_status': False,
+                'ban_status': False,
             })
     
 async def setup(bot):
