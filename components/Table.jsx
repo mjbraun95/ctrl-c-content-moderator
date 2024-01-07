@@ -10,6 +10,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import FormatTimestamp from "./FormatTimestamp";
+import DisplayCategories from "./DisplayCategories";
 
 export default function Table() {
   const [data, setData] = useState([]);
