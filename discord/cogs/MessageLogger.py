@@ -29,7 +29,7 @@ class BanCog(commands.Cog):
         for guild in self.bot.guilds:
             for member in guild.members:
                 doc_ref = db.collection('users').document(str(member.name))
-                print(doc_ref.get().to_dict()['timeout_status'])
+                # print(doc_ref.get().to_dict()['timeout_status'])
                 if doc_ref.get().exists and doc_ref.get().to_dict()['ban_status']:
                     print(f"BANNING {member.name}")
                     try:
