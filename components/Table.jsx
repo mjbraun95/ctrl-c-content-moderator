@@ -13,6 +13,7 @@ export default function Table() {
                     <tr>
                         <th scope="col">User</th>
                         <th scope="col">Flagged Text</th>
+                        <th scope="col">Time</th>
                         <th scope="col">Reason</th>
                         <th scope="col">Ban</th>
                         <th scope="col">Kick</th>
@@ -24,7 +25,9 @@ export default function Table() {
                     <tr >
                         <td className='py-4' scope="row">Baljeet</td>
                         <td className='py-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio aliquid aperiam, deserunt impedit facere consequatur reiciendis. Placeat quaerat eos facere, dolor consequatur eum consectetur molestias nulla sunt amet nostrum deserunt?</td>
-                        <td className='py-4'>Hate Speech 98% <br></br> Violence 40% Harrasment 20%</td>
+                        <td className='py-4'> 24:00</td>
+                        <td className='py-4'> <span>Hate Speech 98%</span><span> Violence 40%</span> <span>Harrasment 20%</span> </td>
+
                         <td className='py-4' ><FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#banConfirmationModal" icon={faXmarkCircle} /></td>
                         <td className='py-4'><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></td>
                         <td className='py-4'><FontAwesomeIcon icon={faStopwatch} /></td>
