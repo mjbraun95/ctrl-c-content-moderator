@@ -19,7 +19,7 @@ const SetBanStatus = ({ username }) => {
         console.error("Error fetching data: ", error);
         setLoading(false);
       });
-  }, []);
+  }, [username]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -28,33 +28,35 @@ const SetBanStatus = ({ username }) => {
   const handleBan = () => {
     console.log("User banned");
     setIsBanned(true);
-    firebase
-      .database()
-      .ref(`${collectionPath}/${username}`)
-      .update({ isBanned: true });
+    firebase.database().ref(`users/${username}`).update({ ban_status: true });
   };
 
   const handleUnban = () => {
     console.log("User unbanned");
     setIsBanned(false);
-    firebase
-      .database()
-      .ref(`${collectionPath}/${username}`)
-      .update({ isBanned: false });
+    firebase.database().ref(`users/${username}`).update({ ban_status: false });
   };
 
   return (
-    <>
-      <button onClick={isBanned ? handleUnban : handleBan}>
+    <td className="py-4">
+      <FontAwesomeIcon
+        data-bs-toggle="modal"
+        data-bs-target="#banConfirmationModal"
+        icon={faXmarkCircle}
+        onClick={isBanned ? handleUnban : handleBan}
+      />
+    </td>
+  );
+};
+
+export default SetBanStatus;
+
+{
+  /* <button onClick={ban_status ? handleUnban : handleBan}>
         <FontAwesomeIcon
           data-bs-toggle="modal"
           data-bs-target="#banConfirmationModal"
         />
         {isBanned ? "Unban User" : "Ban User"}
-      </button>
-      {userData && <div>User Information: {JSON.stringify(userData)}</div>}
-    </>
-  );
-};
-
-export default SetBanStatus;
+      </button> */
+}

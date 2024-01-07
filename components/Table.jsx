@@ -60,14 +60,19 @@ export default function Table() {
                 <DisplayCategories row={row} />
               </td>
 
-              {/* Take in the username as a prop */}
+              {/* Take in the username as a prop and use it as a key to edit the user collection
+
               <td className="py-4">
-                {/* <FontAwesomeIcon
+                <FontAwesomeIcon
                   data-bs-toggle="modal"
                   data-bs-target="#banConfirmationModal"
                   icon={faXmarkCircle}
-                /> */}
+                  onClick={SetBanStatus(row.username)}
+                />
               </td>
+              
+              */}
+              <SetBanStatus user={row.username} />
               <td className="py-4">
                 <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
               </td>
