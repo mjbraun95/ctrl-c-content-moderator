@@ -1,1 +1,5 @@
 /* First I'll define the CSS variable sO */
+.custom-border {
+  -webkit-box-shadow: 5px 5px 0px black;
+  box-shadow: 5px 5px 0px black;
+}
