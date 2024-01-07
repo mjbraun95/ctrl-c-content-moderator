@@ -57,10 +57,10 @@ export default function Table() {
               <FormatTimestamp timestamp={row.timestamp} />
               <td className="py-4">
                 {" "}
-                <DisplayCategories row={row} />
-                {/* <span>Hate Speech 98%</span>
-                <span> Violence 40%</span>
-                <span>Harrasment 20%</span>{" "} */}
+                {console.log(row)}
+                <span className="d-block">Hate Speech 98%</span>
+                <span className="d-block"> Violence 40%</span>
+                <span className="d-block">Harrasment 20%</span>{" "}
               </td>
 
               <td className="py-4">
