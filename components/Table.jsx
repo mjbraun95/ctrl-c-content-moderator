@@ -28,10 +28,10 @@ export default function Table() {
                         <td className='py-4'> 24:00</td>
                         <td className='py-4'> <span>Hate Speech 98%</span><span> Violence 40%</span> <span>Harrasment 20%</span> </td>
 
-                        <td className='py-4' ><FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#banConfirmationModal" icon={faXmarkCircle} /></td>
-                        <td className='py-4'><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></td>
-                        <td className='py-4'><FontAwesomeIcon icon={faStopwatch} /></td>
-                        <td className='py-4'><FontAwesomeIcon icon={faTrash} /></td>
+                        <td className='py-4' ><FontAwesomeIcon className="hover-red" data-bs-toggle="modal" data-bs-target="#banConfirmationModal" icon={faXmarkCircle} /></td>
+                        <td className='py-4'><FontAwesomeIcon className="hover-orange" icon={faPersonWalkingArrowRight} /></td>
+                        <td className='py-4'><FontAwesomeIcon className="hover-blue" icon={faStopwatch} /></td>
+                        <td className='py-4'><FontAwesomeIcon className="hover-dark-red" icon={faTrash} /></td>
                     </tr>
                     {/* Repeat the row for as many entries as you have */}
                 </tbody>

@@ -3,3 +3,28 @@
   -webkit-box-shadow: 5px 5px 0px black;
   box-shadow: 5px 5px 0px black;
 }
+.dashboard{
+  background-image: url('/public/HackedLogo.png');
+  background-size: 400px 400px;
+  background-repeat: repeat;
+}
+/* HoverStyles.css or HoverStyles.module.css */
+.hover-red, .hover-blue, .hover-orange, .hover-dark-red {
+  transition: all 0.3s ease-in-out;
+}
+
+.hover-red:hover {
+  color: red;
+}
+
+.hover-blue:hover {
+  color: blue;
+}
+
+.hover-orange:hover {
+  color: orange;
+}
+
+.hover-dark-red:hover {
+  color: darkred;
+}
