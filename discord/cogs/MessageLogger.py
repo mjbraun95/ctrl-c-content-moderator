@@ -33,13 +33,9 @@ class MessageLogger(commands.Cog):
         misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
         
         if hate_info != False:
-            #print("hate_info: {}".format(hate_info))
-            #print("type(hate_info[0]): {}".format(type(hate_info[0])))
-            #print("(hate_info[0]): {}".format((hate_info[0])))
             message_dict = dict()
             message_id = str(message.created_at)
-            #print("message_id: {}", message_id)
-            message_dict["user_ID"] = message.author.name
+            message_dict["username"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["categories"] = hate_info[0]
@@ -57,11 +53,9 @@ class MessageLogger(commands.Cog):
             #print("hate user logged")
             
         elif misinformation_info != True:
-            #print("misinformation_info: {}".format(misinformation_info))
             message_dict = dict()
             message_id = str(message.created_at)
-            #print("message_id: {}", message_id)
-            message_dict["user_ID"] = message.author.name
+            message_dict["username"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["misinformation"] = "True"
@@ -84,11 +78,23 @@ class MessageLogger(commands.Cog):
                 doc_ref = db.collection('users').document(str(member.name))
                 if not (doc_ref.get()).exists:
                     doc_ref.set({
-                        # 'username': member.name,
+                        'id': member.id,
                         'discriminator': member.discriminator,
                         'number_of_messages_flagged_with_misinformation': 0, 
                         'number_of_messages_flagged_with_hate_speech': 0 
                     })
+    
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        doc_ref = db.collection('users').document(str(member.name))
+        if not (doc_ref.get()).exists:
+            doc_ref.set({
+                'id': member.id,
+                'discriminator': member.discriminator,
+                'number_of_messages_flagged_with_misinformation': 0, 
+                'number_of_messages_flagged_with_hate_speech': 0 
+            })
+    
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
             
