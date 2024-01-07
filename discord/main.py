@@ -20,6 +20,10 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+
 # Comment out cogs you do not need during development
 async def load_extensions():
     await bot.load_extension(f"cogs.MessageLogger")

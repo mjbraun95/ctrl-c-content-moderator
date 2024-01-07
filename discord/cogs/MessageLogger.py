@@ -1,9 +1,8 @@
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
-from discord.ext import commands
-import openai
+from firebase_admin import credentials, firestore
+from discord.ext import commands, tasks
 from openai import OpenAI
+import datetime
 import os
 import requests
 import json
@@ -14,6 +13,61 @@ OPENAI_TOKEN = os.environ['openai']
 cred = credentials.Certificate('firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
+users_ref = db.collection('users')
+
+
+class BanCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.check_database.start()
+        
+    def cog_unload(self):
+        self.check_database.cancel()
+
+    @tasks.loop(seconds=1.0)
+    async def check_database(self):
+        for guild in self.bot.guilds:
+            for member in guild.members:
+                doc_ref = db.collection('users').document(str(member.name))
+                # print(doc_ref.get().to_dict()['timeout_status'])
+                if doc_ref.get().exists and doc_ref.get().to_dict()['ban_status']:
+                    print(f"BANNING {member.name}")
+                    try:
+                        await member.ban()
+                        print("BANNED!")
+                    except:
+                        print("ERROR BANNING")
+                elif doc_ref.get().exists and doc_ref.get().to_dict()['kick_status']:
+                    print(f"KICKING {member.name}")
+                    try:
+                        await member.kick()
+                        print("KICKED!")
+                        doc_ref.update({"kick_status": False})  # reset kick status
+                    except:
+                        print("ERROR KICKING")
+#                 elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
+#                     timeout_status = doc_ref.get().to_dict()['timeout_status']
+#                     print(type(timeout_status))
+#                     print(timeout_status)
+#                     print(f"TIMEOUT {member.name}")
+#                     try:
+                        
+#                         delta = datetime.timedelta(
+#                             # days=50,
+#                             # seconds=27,
+#                             # microseconds=10,
+#                             # milliseconds=29000,
+#                             minutes=1,
+#                             # hours=8,
+#                             # weeks=2
+#                         )
+#                         # await member.timeout(delta)
+#                         print(doc_ref.get().to_dict()['timeout_status'])
+#                         print("TIMED OUT!")
+#                         # doc_ref.update({"timeout_status": False})  # reset timeout status
+#                     except:
+#                         print("ERROR TIMING OUT")
+                            
 
 class MessageLogger(commands.Cog):
 
@@ -33,13 +87,9 @@ class MessageLogger(commands.Cog):
         misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
         
         if hate_info != False:
-            #print("hate_info: {}".format(hate_info))
-            #print("type(hate_info[0]): {}".format(type(hate_info[0])))
-            #print("(hate_info[0]): {}".format((hate_info[0])))
             message_dict = dict()
             message_id = str(message.created_at)
-            #print("message_id: {}", message_id)
-            message_dict["user_ID"] = message.author.name
+            message_dict["username"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["categories"] = hate_info[0]
@@ -57,11 +107,9 @@ class MessageLogger(commands.Cog):
             #print("hate user logged")
             
         elif misinformation_info != True:
-            #print("misinformation_info: {}".format(misinformation_info))
             message_dict = dict()
             message_id = str(message.created_at)
-            #print("message_id: {}", message_id)
-            message_dict["user_ID"] = message.author.name
+            message_dict["username"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["misinformation"] = "True"
@@ -84,13 +132,29 @@ class MessageLogger(commands.Cog):
                 doc_ref = db.collection('users').document(str(member.name))
                 if not (doc_ref.get()).exists:
                     doc_ref.set({
-                        # 'username': member.name,
+                        'id': member.id,
                         'discriminator': member.discriminator,
                         'number_of_messages_flagged_with_misinformation': 0, 
-                        'number_of_messages_flagged_with_hate_speech': 0 
+                        'number_of_messages_flagged_with_hate_speech': 0,
+                        'ban_status': False,
+                        'kick_status': False,
+                        'timeout_status': False,
                     })
+    
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        doc_ref = db.collection('users').document(str(member.name))
+        if not (doc_ref.get()).exists:
+            doc_ref.set({
+                'id': member.id,
+                'discriminator': member.discriminator,
+                'number_of_messages_flagged_with_misinformation': 0, 
+                'number_of_messages_flagged_with_hate_speech': 0 
+            })
+    
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
+  await bot.add_cog(BanCog(bot))
             
 #Checks a username's comment
 class Check:
@@ -118,40 +182,22 @@ class Check:
             categories = response_dict["results"][0]["categories"]
             category_scores = response_dict["results"][0]["category_scores"]
 
-            #Top three - Go through scores as a list and sort them in reverse order.
-            category_scores_list = []
-            
-            for key in category_scores:
-                category_scores_list.append([category_scores[key],key])
+             # Calculate total score for normalization.
+            total_score = sum(category_scores.values())
 
-            category_scores_list.sort()
-            category_scores_list.reverse()
+            # Normalize scores and convert to percentage.
+            category_percentages = {key: round((value / total_score) * 100, 3) for key, value in category_scores.items()}
 
-            #Top three get extracted.
-            top_three_list = category_scores_list[0:3]
+             # Sort categories by percentage in descending order.
+            sorted_categories = sorted(category_percentages.items(), key=lambda x: x[1], reverse=True)
 
-            #Top three is converted back to a dict.
-            top_three_dict = {}
-            top_three_total = 0
-            
-            
-            for index, element in enumerate(top_three_list):
-                key = element[1]
-                value = element[0]
-                top_three_dict[key] = value
-                top_three_total += value
+            # Extract top three categories.
+            top_three = sorted_categories[:3]
+            top_three_dict = {item[0]: item[1] for item in top_three}
 
-            first_hate_val = top_three_list[0][0]
-            second_hate_val = top_three_list[1][0]
-            third_hate_val = top_three_list[2][0]
+            print("top_three_dict: {}".format(top_three_dict))
 
-            first_hate_percent = round(first_hate_val/top_three_total,3)*100
-            second_hate_percent = round(second_hate_val/top_three_total,3)*100
-            third_hate_percent = round(third_hate_val/top_three_total,3)*100
-
-            print(first_hate_percent,second_hate_percent,third_hate_percent)
-
-            return(categories, category_scores, top_three_dict, first_hate_percent, second_hate_percent, third_hate_percent)
+            return (categories, category_scores, top_three_dict)
         
     def misinformation_info(self):
         
