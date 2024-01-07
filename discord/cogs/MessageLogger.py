@@ -11,7 +11,7 @@ import json
 OPENAI_TOKEN = os.environ['openai']
 
 # Use the service account
-cred = credentials.Certificate('../firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+cred = credentials.Certificate('/firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -102,10 +102,16 @@ class Check:
 
             #Top three is converted back to a dict.
             top_three_dict = {}
+            top_three_total = 0
             for index, element in enumerate(top_three_list):
                 key = element[1]
                 value = element[0]
                 top_three_dict[key] = value
+                top_three_total += value
+
+            first_hate = top_three_list[0]
+            second_hate = top_three_list[0]
+            
 
             return (categories, category_scores, top_three_dict, self.message, self.response)
         
