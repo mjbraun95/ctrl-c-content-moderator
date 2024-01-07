@@ -95,9 +95,9 @@ class MessageLogger(commands.Cog):
             message_dict["categories"] = hate_info[0]
             message_dict["category_scores"] = hate_info[1]
             message_dict["top_three_dict"] = hate_info[2]
-            message_dict["1st_violation_percentage"] = hate_info[3]
-            message_dict["2nd_violation_percentage"] = hate_info[4]
-            message_dict["3rd_violation_percentage"] = hate_info[5]
+            # message_dict["1st_violation_percentage"] = hate_info[3]
+            # message_dict["2nd_violation_percentage"] = hate_info[4]
+            # message_dict["3rd_violation_percentage"] = hate_info[5]
             db.collection("messages").document(message_id).set(message_dict)
             #print("hate message logged")
             
