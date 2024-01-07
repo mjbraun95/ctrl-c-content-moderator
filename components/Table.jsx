@@ -11,6 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import FormatTimestamp from "./FormatTimestamp";
 import DisplayCategories from "./DisplayCategories";
+import SetBanStatus from "./SetBanStatus.js";
+import SetKickStatus from "./SetKickStatus.js";
 
 export default function Table() {
   const [data, setData] = useState([]);
@@ -57,10 +59,7 @@ export default function Table() {
               <FormatTimestamp timestamp={row.timestamp} />
               <td className="py-4">
                 {" "}
-                {console.log(row)}
-                <span className="d-block">Hate Speech 98%</span>
-                <span className="d-block"> Violence 40%</span>
-                <span className="d-block">Harrasment 20%</span>{" "}
+                <DisplayCategories row={row} />
               </td>
 
               <td className="py-4">

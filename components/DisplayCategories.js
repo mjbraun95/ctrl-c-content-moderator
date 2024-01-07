@@ -13,7 +13,7 @@ import React from "react";
 
 function DisplayCategories({ row }) {
   const formatPercentage = (number) => {
-    return (number * 100).toFixed(2) + "%";
+    return number.toFixed(2) + "%";
   };
 
   const renderFlagReasons = (row) => {
@@ -21,11 +21,11 @@ function DisplayCategories({ row }) {
     if (row.misinformation) {
       return <span>Misinformation</span>;
     } else {
-      const sortedReasons = Object.entries(row.top_three_dict || {})
-        .sort((a, b) => b[1] - a[1]) // Sort by weight in descending order
-        .slice(0, 3); // Take top 3 reasons
-
-      if (sortedReasons.length > 0 && sortedReasons[0][1] > 0.85) {
+      const sortedReasons = Object.entries(row.top_three_dict || {}).sort(
+        (a, b) => b[1] - a[1]
+      ); // Sort by weight in descending order
+      // .slice(0, 3); // Take top 3 reasons
+      if (sortedReasons.length > 0 && sortedReasons[0][1] > 95) {
         // Threshold check
         return (
           <span>
@@ -36,7 +36,7 @@ function DisplayCategories({ row }) {
       }
 
       return sortedReasons.map(([reason, weight]) => (
-        <span key={reason} className="reason-tag">
+        <span key={reason} className="reason-tag d-block">
           {reason.replace(/_/g, " ")}: {formatPercentage(weight)}
         </span>
       ));

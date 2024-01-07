@@ -7,12 +7,13 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCudZCji9AujnPzv2osAam03QSrRW6hHak",
-  authDomain: "ctrl-c-hacked2024.firebaseapp.com",
-  projectId: "ctrl-c-hacked2024",
-  storageBucket: "ctrl-c-hacked2024.appspot.com",
-  messagingSenderId: "690458759354",
-  appId: "1:690458759354:web:588249b7c574e7ea37f283",
+  apiKey: "AIzaSyCtlnfLchmkW2R4RwEa0zaJtCe9mKi_UbU",
+  authDomain: "ctrl-c-hacked2024-2.firebaseapp.com",
+  projectId: "ctrl-c-hacked2024-2",
+  storageBucket: "ctrl-c-hacked2024-2.appspot.com",
+  messagingSenderId: "736612628562",
+  appId: "1:736612628562:web:0e76e3564a0d4a2344478b",
+  measurementId: "G-XC997FZKYF",
 };
 
 // Initialize Firebase
