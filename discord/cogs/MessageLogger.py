@@ -11,7 +11,7 @@ import pytz
 OPENAI_TOKEN = os.environ['openai']
 
 # Use the service account
-cred = credentials.Certificate('firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+cred = credentials.Certificate('firebase/ctrl-c-hacked2024-2-firebase-adminsdk-z8mgd-4b6013d8d3.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 users_ref = db.collection('users')
@@ -102,16 +102,16 @@ class MessageLogger(commands.Cog):
             message_dict["categories"] = hate_info[0]
             message_dict["category_scores"] = hate_info[1]
             message_dict["top_three_dict"] = hate_info[2]
-            message_dict["1st_violation_percentage"] = hate_info[3]
-            message_dict["2nd_violation_percentage"] = hate_info[4]
-            message_dict["3rd_violation_percentage"] = hate_info[5]
+            # message_dict["1st_violation_percentage"] = hate_info[3]
+            # message_dict["2nd_violation_percentage"] = hate_info[4]
+            # message_dict["3rd_violation_percentage"] = hate_info[5]
             db.collection("messages").document(message_id).set(message_dict)
-            #print("hate message logged")
+            print("hate message logged")
             
             db.collection("users")
             user_ref = db.collection("users").document(message.author.name)
             user_ref.update({"number_of_messages_flagged_with_hate_speech": firestore.Increment(1)})
-            #print("hate user logged")
+            print("hate user logged")
             
         # elif misinformation_info != True:
         #     message_dict = dict()
