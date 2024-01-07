@@ -33,12 +33,12 @@ class MessageLogger(commands.Cog):
         misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
         
         if hate_info != False:
-            print("hate_info: {}".format(hate_info))
-            print("type(hate_info[0]): {}".format(type(hate_info[0])))
-            print("(hate_info[0]): {}".format((hate_info[0])))
+            #print("hate_info: {}".format(hate_info))
+            #print("type(hate_info[0]): {}".format(type(hate_info[0])))
+            #print("(hate_info[0]): {}".format((hate_info[0])))
             message_dict = dict()
             message_id = str(message.created_at)
-            print("message_id: {}", message_id)
+            #print("message_id: {}", message_id)
             message_dict["categories"] = hate_info[0]
             message_dict["category_scores"] = hate_info[1]
             message_dict["top_three_dict"] = hate_info[2]
@@ -46,36 +46,36 @@ class MessageLogger(commands.Cog):
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             db.collection("messages").document(message_id).set(message_dict)
-            print("hate message logged")
+            #print("hate message logged")
             
             db.collection("users")
             user_ref = db.collection("users").document(message.author.name)
             user_ref.update({"number_of_messages_flagged_with_hate_speech": firestore.Increment(1)})
-            print("hate user logged")
+            #print("hate user logged")
             
         elif misinformation_info != True:
-            print("misinformation_info: {}".format(misinformation_info))
+            #print("misinformation_info: {}".format(misinformation_info))
             message_dict = dict()
             message_id = str(message.created_at)
-            print("message_id: {}", message_id)
+            #print("message_id: {}", message_id)
             message_dict["user_ID"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["misinformation"] = "True"
             db.collection("messages").document(message_id).set(message_dict)
-            print("misinformation message logged")
+            #print("misinformation message logged")
             
             db.collection("users")
             user_ref = db.collection("users").document(message.author.name)
             user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
-            print("misinformation user logged")
+            #print("misinformation user logged")
             
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'We have logged in as {self.bot.user}')
-        print("self.bot.guilds: {}".format(self.bot.guilds))
+        #print(f'We have logged in as {self.bot.user}')
+        #print("self.bot.guilds: {}".format(self.bot.guilds))
         for guild in self.bot.guilds:
-            print("guild.members: {}".format(guild.members))
+            #print("guild.members: {}".format(guild.members))
             for member in guild.members:
                 # Store each username in Firestore
                 doc_ref = db.collection('users').document(str(member.name))
@@ -142,14 +142,13 @@ class Check:
             second_hate_val = top_three_list[1][0]
             third_hate_val = top_three_list[2][0]
 
-            #first_hate_percent = first_hate_val/top_three_total
-            #second_hate_percent = second_hate_val/top_three_total
-            #third_hate_percent = third_hate_percent/top_three_total
-            print("sanity check")
-            #print(first_hate_percent,second_hate_percent,third_hate_percent)
-            print(categories, category_scores, top_three_dict, self.message, self.response)
+            first_hate_percent = round(first_hate_val/top_three_total,3)*100
+            second_hate_percent = round(second_hate_val/top_three_total,3)*100
+            third_hate_percent = round(third_hate_val/top_three_total,3)*100
 
-            return(categories, category_scores, top_three_dict, self.message, self.response)
+            print(first_hate_percent,second_hate_percent,third_hate_percent)
+
+            return(categories, category_scores, top_three_dict, self.message, self.response, first_hate_percent, second_hate_percent, third_hate_percent)
         
     def misinformation_info(self):
         
@@ -175,7 +174,5 @@ class Check:
             answer = False
         else:
             return True
-
-        print(type(answer),answer)
 
         return {"information": answer}

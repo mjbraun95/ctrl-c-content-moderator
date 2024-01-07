@@ -8,12 +8,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-# # Use the service account
-# cred = credentials.Certificate('../firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
-# firebase_admin.initialize_app(cred)
-# db = firestore.client()
-
-
 load_dotenv()
 
 DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
