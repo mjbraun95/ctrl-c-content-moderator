@@ -1,19 +1,19 @@
 import Table from "@/components/Table";
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useRouter } from 'next/router';
-import useAuth from './api/authHook.js';
+import useAuthen from './api/authHook.js'; // Make sure this is actually a hook
 
-export default function dashboard() {
+export default function Dashboard() { // Component names must start with an uppercase letter
   const backgroundStyle = {
     backgroundImage: `url('background.png')`,
     backgroundSize: "1280px 832px",
     backgroundRepeat: "repeat",
     width: "100%", // Set the width you need for your element
     height: "100vh", // Set the height you need for your element
-    // Optional: If you want to rotate the container to give a diagonal effect
   };
-  const { user, loading } = useAuth();
+
+  const { user, loading } = useAuthen();
   const router = useRouter();
 
   useEffect(() => {
@@ -30,10 +30,9 @@ export default function dashboard() {
         <h1 className="my-5">
           Welcome <span className="text">Admin</span>
         </h1>
-        <Table></Table>
-        <ConfirmModal></ConfirmModal>
+        <Table />
+        <ConfirmModal />
       </div>
     </div>
   );
 }
-
