@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { fetchDataFromFirestore } from "../pages/api/firebase.call.js";
+import { fetchDataFromFirestore } from "../pages/api/firebase.messages.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCoffee,
@@ -52,9 +52,7 @@ export default function Table() {
         <tbody>
           {data.map((row) => (
             <tr key={row.id}>
-              <td className="py-4" scope="row">
-                {row.user_ID}
-              </td>
+              <td className="py-4">{row.username}</td>
               <td className="py-4">{row.message}</td>
               <FormatTimestamp timestamp={row.timestamp} />
               <td className="py-4">
@@ -62,15 +60,26 @@ export default function Table() {
                 <DisplayCategories row={row} />
               </td>
 
+              {/* Take in the username as a prop and use it as a key to edit the user collection
+
               <td className="py-4">
                 <FontAwesomeIcon
                   data-bs-toggle="modal"
                   data-bs-target="#banConfirmationModal"
                   icon={faXmarkCircle}
+                  onClick={SetBanStatus(row.username)}
                 />
               </td>
+              
+              */}
+              <SetBanStatus username={row.username} />
               <td className="py-4">
-                <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
+                <FontAwesomeIcon
+                  onClick={() => {
+                    console.log(row);
+                  }}
+                  icon={faPersonWalkingArrowRight}
+                />
               </td>
               <td className="py-4">
                 <FontAwesomeIcon icon={faStopwatch} />
