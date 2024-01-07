@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchDataFromFirestore } from "../api/firebase.call.js";
+import { fetchDataFromFirestore } from "../pages/api/firebase.call.js";
 
 function DisplayData() {
   const [data, setData] = useState([]);
