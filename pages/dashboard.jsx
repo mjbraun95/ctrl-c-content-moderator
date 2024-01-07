@@ -10,7 +10,6 @@ export default function dashboard() {
     width: '100%', // Set the width you need for your element
     height: '100vh', // Set the height you need for your element
     // Optional: If you want to rotate the container to give a diagonal effect
-    overflow: 'hidden',
   };
   return (
     <div style={backgroundStyle} >
