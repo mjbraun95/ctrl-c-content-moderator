@@ -61,7 +61,10 @@ class MessageLogger(commands.Cog):
             
             db.collection("messages").document(message_id).set(message_dict)
             print("done")
-
+            db.collection("users")
+            user_ref = db.collection("users").document(message.author.name)
+            user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
+            
     @commands.Cog.listener()
     async def on_ready(self):
         print(f'We have logged in as {self.bot.user}')
