@@ -15,7 +15,7 @@ export default function dashboard() {
     <div style={backgroundStyle}>
       <div className="container dashboard">
         <h1 className="my-5">
-          Welcome <span className="text">$Name</span>
+          Welcome <span className="text">Admin</span>
         </h1>
         <Table></Table>
         <ConfirmModal></ConfirmModal>
