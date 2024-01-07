@@ -11,7 +11,7 @@ import json
 OPENAI_TOKEN = os.environ['openai']
 
 # Use the service account
-cred = credentials.Certificate('/firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+cred = credentials.Certificate('firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -106,6 +106,7 @@ class Check:
 
             #Top three - Go through scores as a list and sort them in reverse order.
             category_scores_list = []
+            
             for key in category_scores:
                 category_scores_list.append([category_scores[key],key])
 
@@ -118,17 +119,26 @@ class Check:
             #Top three is converted back to a dict.
             top_three_dict = {}
             top_three_total = 0
+            
+            
             for index, element in enumerate(top_three_list):
                 key = element[1]
                 value = element[0]
                 top_three_dict[key] = value
                 top_three_total += value
 
-            first_hate = top_three_list[0]
-            second_hate = top_three_list[0]
-            
+            first_hate_val = top_three_list[0][0]
+            second_hate_val = top_three_list[1][0]
+            third_hate_val = top_three_list[2][0]
 
-            return (categories, category_scores, top_three_dict, self.message, self.response)
+            #first_hate_percent = first_hate_val/top_three_total
+            #second_hate_percent = second_hate_val/top_three_total
+            #third_hate_percent = third_hate_percent/top_three_total
+            print("sanity check")
+            #print(first_hate_percent,second_hate_percent,third_hate_percent)
+            print(categories, category_scores, top_three_dict, self.message, self.response)
+
+            return(categories, category_scores, top_three_dict, self.message, self.response)
         
     def misinformation_info(self):
         
