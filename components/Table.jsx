@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { fetchDataFromFirestore } from "../pages/api/firebase.call.js";
+import { fetchDataFromFirestore } from "../pages/api/firebase.messages.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCoffee,
@@ -52,9 +52,7 @@ export default function Table() {
         <tbody>
           {data.map((row) => (
             <tr key={row.id}>
-              <td className="py-4" scope="row">
-                {row.username}
-              </td>
+              <td className="py-4">{row.username}</td>
               <td className="py-4">{row.message}</td>
               <FormatTimestamp timestamp={row.timestamp} />
               <td className="py-4">
@@ -62,12 +60,13 @@ export default function Table() {
                 <DisplayCategories row={row} />
               </td>
 
+              {/* Take in the username as a prop */}
               <td className="py-4">
-                <FontAwesomeIcon
+                {/* <FontAwesomeIcon
                   data-bs-toggle="modal"
                   data-bs-target="#banConfirmationModal"
                   icon={faXmarkCircle}
-                />
+                /> */}
               </td>
               <td className="py-4">
                 <FontAwesomeIcon onClick={()=>{
