@@ -6,6 +6,7 @@ import datetime
 import os
 import requests
 import json
+import pytz
 
 OPENAI_TOKEN = os.environ['openai']
 
@@ -45,28 +46,34 @@ class BanCog(commands.Cog):
                         doc_ref.update({"kick_status": False})  # reset kick status
                     except:
                         print("ERROR KICKING")
-#                 elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
-#                     timeout_status = doc_ref.get().to_dict()['timeout_status']
-#                     print(type(timeout_status))
-#                     print(timeout_status)
-#                     print(f"TIMEOUT {member.name}")
-#                     try:
-                        
-#                         delta = datetime.timedelta(
-#                             # days=50,
-#                             # seconds=27,
-#                             # microseconds=10,
-#                             # milliseconds=29000,
-#                             minutes=1,
-#                             # hours=8,
-#                             # weeks=2
-#                         )
-#                         # await member.timeout(delta)
-#                         print(doc_ref.get().to_dict()['timeout_status'])
-#                         print("TIMED OUT!")
-#                         # doc_ref.update({"timeout_status": False})  # reset timeout status
-#                     except:
-#                         print("ERROR TIMING OUT")
+                elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
+                    print("test")
+                    # Assuming you have a Firestore timestamp
+                    timeout_status = doc_ref.get().to_dict()['timeout_status']
+                    # print(type(timeout_status))
+                    print(timeout_status)
+
+                    current_datetime = datetime.datetime.utcnow()
+                    edmonton_timezone = pytz.timezone('America/Edmonton')
+                    current_datetime = current_datetime.replace(tzinfo=pytz.utc).astimezone(edmonton_timezone)
+                    print("Current datetime in Edmonton:", current_datetime)
+
+                    # Calculate timedelta
+                    timedelta_difference = timeout_status- current_datetime
+                    days_difference = timedelta_difference.days
+                    seconds_difference = timedelta_difference.seconds
+                    microseconds_difference = timedelta_difference.microseconds
+                    print(f"Days: {days_difference}, Seconds: {seconds_difference}, Microseconds: {microseconds_difference}")
+                    
+                    if timeout_status > current_datetime:                        
+                        try:
+                            print(f"TIMEOUT {member.name}")
+                            await member.timeout(timedelta_difference)
+                            print("TIMED OUT!")
+                            # doc_ref.update({"timeout_status": False})  # reset timeout status
+                        except Exception as e:
+                            print(e)
+                            print("ERROR TIMING OUT")
                             
 
 class MessageLogger(commands.Cog):
@@ -84,7 +91,7 @@ class MessageLogger(commands.Cog):
     
         message1 = Check(message.content)
         hate_info = message1.hating_info()  # (categories, category_scores, top_three_dict)
-        misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
+        # misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
         
         if hate_info != False:
             message_dict = dict()
@@ -106,20 +113,20 @@ class MessageLogger(commands.Cog):
             user_ref.update({"number_of_messages_flagged_with_hate_speech": firestore.Increment(1)})
             #print("hate user logged")
             
-        elif misinformation_info != True:
-            message_dict = dict()
-            message_id = str(message.created_at)
-            message_dict["username"] = message.author.name
-            message_dict["message"] = message.content
-            message_dict["timestamp"] = str(message.created_at)
-            message_dict["misinformation"] = "True"
-            db.collection("messages").document(message_id).set(message_dict)
-            #print("misinformation message logged")
+        # elif misinformation_info != True:
+        #     message_dict = dict()
+        #     message_id = str(message.created_at)
+        #     message_dict["username"] = message.author.name
+        #     message_dict["message"] = message.content
+        #     message_dict["timestamp"] = str(message.created_at)
+        #     message_dict["misinformation"] = "True"
+        #     db.collection("messages").document(message_id).set(message_dict)
+        #     #print("misinformation message logged")
             
-            db.collection("users")
-            user_ref = db.collection("users").document(message.author.name)
-            user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
-            #print("misinformation user logged")
+        #     db.collection("users")
+        #     user_ref = db.collection("users").document(message.author.name)
+        #     user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
+        #     #print("misinformation user logged")
             
     @commands.Cog.listener()
     async def on_ready(self):
