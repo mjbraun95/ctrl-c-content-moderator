@@ -17,7 +17,7 @@ function LoginForm() {
       // const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // User signed in - userCredential.user will have the signed-in user info
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      router.push('/dashboard')
+      router.push('/Dashboard')
       
     } catch (error) {
       // Handle Errors here
