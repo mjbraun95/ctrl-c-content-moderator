@@ -118,40 +118,22 @@ class Check:
             categories = response_dict["results"][0]["categories"]
             category_scores = response_dict["results"][0]["category_scores"]
 
-            #Top three - Go through scores as a list and sort them in reverse order.
-            category_scores_list = []
-            
-            for key in category_scores:
-                category_scores_list.append([category_scores[key],key])
+             # Calculate total score for normalization.
+            total_score = sum(category_scores.values())
 
-            category_scores_list.sort()
-            category_scores_list.reverse()
+            # Normalize scores and convert to percentage.
+            category_percentages = {key: round((value / total_score) * 100, 3) for key, value in category_scores.items()}
 
-            #Top three get extracted.
-            top_three_list = category_scores_list[0:3]
+             # Sort categories by percentage in descending order.
+            sorted_categories = sorted(category_percentages.items(), key=lambda x: x[1], reverse=True)
 
-            #Top three is converted back to a dict.
-            top_three_dict = {}
-            top_three_total = 0
-            
-            
-            for index, element in enumerate(top_three_list):
-                key = element[1]
-                value = element[0]
-                top_three_dict[key] = value
-                top_three_total += value
+            # Extract top three categories.
+            top_three = sorted_categories[:3]
+            top_three_dict = {item[0]: item[1] for item in top_three}
 
-            first_hate_val = top_three_list[0][0]
-            second_hate_val = top_three_list[1][0]
-            third_hate_val = top_three_list[2][0]
+            print("top_three_dict: {}".format(top_three_dict))
 
-            first_hate_percent = round(first_hate_val/top_three_total,3)*100
-            second_hate_percent = round(second_hate_val/top_three_total,3)*100
-            third_hate_percent = round(third_hate_val/top_three_total,3)*100
-
-            print(first_hate_percent,second_hate_percent,third_hate_percent)
-
-            return(categories, category_scores, top_three_dict, first_hate_percent, second_hate_percent, third_hate_percent)
+            return (categories, category_scores, top_three_dict)
         
     def misinformation_info(self):
         
