@@ -74,7 +74,9 @@ export default function Table() {
               */}
               <SetBanStatus user={row.username} />
               <td className="py-4">
-                <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
+                <FontAwesomeIcon onClick={()=>{
+                  console.log(row)
+                }} icon={faPersonWalkingArrowRight} />
               </td>
               <td className="py-4">
                 <FontAwesomeIcon icon={faStopwatch} />
