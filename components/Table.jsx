@@ -23,9 +23,9 @@ export default function Table() {
                 <tbody>
                     <tr >
                         <td className='py-4' scope="row">Baljeet</td>
-                        <td className='py-4'>People suck People suck People suck People suck People suck People suck People suck People suck</td>
-                        <td className='py-4'>Hate Speech 98%</td>
-                        <td className='py-4' data-bs-toggle="modal" data-bs-target="#banConfirmationModal"><FontAwesomeIcon icon={faXmarkCircle} /></td>
+                        <td className='py-4'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio aliquid aperiam, deserunt impedit facere consequatur reiciendis. Placeat quaerat eos facere, dolor consequatur eum consectetur molestias nulla sunt amet nostrum deserunt?</td>
+                        <td className='py-4'>Hate Speech 98% <br></br> Violence 40% Harrasment 20%</td>
+                        <td className='py-4' ><FontAwesomeIcon data-bs-toggle="modal" data-bs-target="#banConfirmationModal" icon={faXmarkCircle} /></td>
                         <td className='py-4'><FontAwesomeIcon icon={faPersonWalkingArrowRight} /></td>
                         <td className='py-4'><FontAwesomeIcon icon={faStopwatch} /></td>
                         <td className='py-4'><FontAwesomeIcon icon={faTrash} /></td>
