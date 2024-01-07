@@ -53,7 +53,7 @@ export default function Table() {
           {data.map((row) => (
             <tr key={row.id}>
               <td className="py-4" scope="row">
-                {row.user_ID}
+                {row.username}
               </td>
               <td className="py-4">{row.message}</td>
               <FormatTimestamp timestamp={row.timestamp} />
@@ -70,7 +70,9 @@ export default function Table() {
                 />
               </td>
               <td className="py-4">
-                <FontAwesomeIcon icon={faPersonWalkingArrowRight} />
+                <FontAwesomeIcon onClick={()=>{
+                  console.log(row)
+                }} icon={faPersonWalkingArrowRight} />
               </td>
               <td className="py-4">
                 <FontAwesomeIcon icon={faStopwatch} />
