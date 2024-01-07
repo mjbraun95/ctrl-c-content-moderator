@@ -3,6 +3,14 @@ import asyncio
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+# # Use the service account
+# cred = credentials.Certificate('../firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+# firebase_admin.initialize_app(cred)
+# db = firestore.client()
 
 load_dotenv()
 
@@ -11,15 +19,10 @@ DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
 PREFIX = '!'
 
 intents = discord.Intents.default()
+intents.members = True  # Enable member intents
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
-
-
-@bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user}')
-
 
 # Comment out cogs you do not need during development
 async def load_extensions():
@@ -33,7 +36,6 @@ async def main():
     async with bot:
         await load_extensions()
         await bot.start(DISCORD_TOKEN)
-
 
 if __name__ == "__main__":
     asyncio.run(main())

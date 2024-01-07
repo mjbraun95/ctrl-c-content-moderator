@@ -30,42 +30,38 @@ class MessageLogger(commands.Cog):
         message1 = Check(message.content)
         hate_info = message1.give_info()  # (categories, category_scores, top_three_dict)
         if hate_info:
-            # categories, category_scores, top_three_dict
             print("hate_info: {}".format(hate_info))
             print("type(hate_info[0]): {}".format(type(hate_info[0])))
             print("(hate_info[0]): {}".format((hate_info[0])))
-            sample_dict = dict()
-            message_id = str(uuid.uuid4())
+            message_dict = dict()
+            message_id = str(message.created_at)
             print("message_id: {}", message_id)
-            sample_dict["categories"] = hate_info[0]
-            sample_dict["category_scores"] = hate_info[1]
-            sample_dict["top_three_dict"] = hate_info[2]
-            # sample_dict["metadata"] = {"author: "}
-            # print("type(message): {}".format(type(message)))
-            # print("type(message.content): {}".format(type(message.content)))
-            # print("type(message.author.name): {}".format(type(message.author.name)))
-            sample_dict["user_ID"] = message.author.name
-            sample_dict["message"] = message.content
-            sample_dict["timestamp"] = str(message.created_at)
-            # print("sample_dict: {}".format(sample_dict))
-            # print(type(sample_dict))
+            message_dict["categories"] = hate_info[0]
+            message_dict["category_scores"] = hate_info[1]
+            message_dict["top_three_dict"] = hate_info[2]
+            message_dict["user_ID"] = message.author.name
+            message_dict["message"] = message.content
+            message_dict["timestamp"] = str(message.created_at)
             
-            db.collection("main").document(message_id).set(sample_dict)
+            db.collection("messages").document(message_id).set(message_dict)
             print("done")
-            
-            
-            
-            # db.collection("main").document(message_id).set(hate_info[0]) #categories
-            # db.collection("main").document("category_scores").set(hate_info[1]) #category_scores
-            # db.collection("main").document("top_three_dict").set(hate_info[2]) #top_three_dict
-            # db.collection("main").document("user_ID").set(message.author) 
-            # db.collection("main").document("message").set(message.content)
-            # db.collection("main").document("message").set(message.timestamp)
-            # db.collection("users").document("LA").set(data)
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(f'We have logged in as {self.bot.user}')
+        print("self.bot.guilds: {}".format(self.bot.guilds))
+        for guild in self.bot.guilds:
+            print("guild.members: {}".format(guild.members))
+            for member in guild.members:
+                # Store each username in Firestore
+                doc_ref = db.collection('users').document(str(member.id))
+                doc_ref.set({
+                    'username': member.name,
+                    'discriminator': member.discriminator
+                })
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
-
+            
 #Checks a username's comment
 class Check:
     def __init__(self, message, username = None, flagged = None):
