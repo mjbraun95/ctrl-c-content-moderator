@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from discord.ext import commands, tasks
 from openai import OpenAI
+import datetime
 import os
 import requests
 import json
@@ -28,6 +29,7 @@ class BanCog(commands.Cog):
         for guild in self.bot.guilds:
             for member in guild.members:
                 doc_ref = db.collection('users').document(str(member.name))
+                print(doc_ref.get().to_dict()['timeout_status'])
                 if doc_ref.get().exists and doc_ref.get().to_dict()['ban_status']:
                     print(f"BANNING {member.name}")
                     try:
@@ -35,6 +37,36 @@ class BanCog(commands.Cog):
                         print("BANNED!")
                     except:
                         print("ERROR BANNING")
+                elif doc_ref.get().exists and doc_ref.get().to_dict()['kick_status']:
+                    print(f"KICKING {member.name}")
+                    try:
+                        await member.kick()
+                        print("KICKED!")
+                        doc_ref.update({"kick_status": False})  # reset kick status
+                    except:
+                        print("ERROR KICKING")
+#                 elif doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
+#                     timeout_status = doc_ref.get().to_dict()['timeout_status']
+#                     print(type(timeout_status))
+#                     print(timeout_status)
+#                     print(f"TIMEOUT {member.name}")
+#                     try:
+                        
+#                         delta = datetime.timedelta(
+#                             # days=50,
+#                             # seconds=27,
+#                             # microseconds=10,
+#                             # milliseconds=29000,
+#                             minutes=1,
+#                             # hours=8,
+#                             # weeks=2
+#                         )
+#                         # await member.timeout(delta)
+#                         print(doc_ref.get().to_dict()['timeout_status'])
+#                         print("TIMED OUT!")
+#                         # doc_ref.update({"timeout_status": False})  # reset timeout status
+#                     except:
+#                         print("ERROR TIMING OUT")
                             
 
 class MessageLogger(commands.Cog):
