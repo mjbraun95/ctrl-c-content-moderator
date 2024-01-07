@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import {auth} from '../pages/api/firebase.config'
 import {signInWithEmailAndPassword} from 'firebase/auth'
+import { useRouter } from 'next/router'
 
 function LoginForm() {
   // Initialize state for username and password
+  const router = useRouter()
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -13,8 +16,9 @@ function LoginForm() {
     try {
       // const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // User signed in - userCredential.user will have the signed-in user info
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      console.log('User signed in:', userCredential.user);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      router.push('/dashboard')
+      
     } catch (error) {
       // Handle Errors here
       setError(error.message);
@@ -26,7 +30,7 @@ function LoginForm() {
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div className="card custom-border rounded-0 border-3 border-black" style={{ width: '22rem' }}>
         <div className="card-body">
-          <h1 className="card-title text-center mb-5">Content Moderator</h1>
+          <h1 className="card-title text-center mb-5">The Ban Hammer</h1>
           {error && <div className="alert alert-danger" role="alert">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">

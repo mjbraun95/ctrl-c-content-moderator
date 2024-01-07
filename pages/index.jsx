@@ -7,11 +7,13 @@ import LoginForm from "@/components/LoginForm";
 
 const inter = Inter({ subsets: ['latin'] })
 
+
 export default function Home() {
   return (
     <>
       <div className="container d-flex justify-content-around">
         <LoginForm></LoginForm>
+        {/* <Link href='/dashboard'>Dashboard</Link> */}
       </div>
     </>
   )
