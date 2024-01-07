@@ -45,9 +45,13 @@ class MessageLogger(commands.Cog):
             message_dict["user_ID"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
-            
             db.collection("messages").document(message_id).set(message_dict)
-            print("done")
+            print("hate message logged")
+            
+            db.collection("users")
+            user_ref = db.collection("users").document(message.author.name)
+            user_ref.update({"number_of_messages_flagged_with_hate_speech": firestore.Increment(1)})
+            print("hate user logged")
             
         elif misinformation_info != True:
             print("misinformation_info: {}".format(misinformation_info))
@@ -58,12 +62,13 @@ class MessageLogger(commands.Cog):
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
             message_dict["misinformation"] = "True"
-            
             db.collection("messages").document(message_id).set(message_dict)
-            print("done")
+            print("misinformation message logged")
+            
             db.collection("users")
             user_ref = db.collection("users").document(message.author.name)
             user_ref.update({"number_of_messages_flagged_with_misinformation": firestore.Increment(1)})
+            print("misinformation user logged")
             
     @commands.Cog.listener()
     async def on_ready(self):
