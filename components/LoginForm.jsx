@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import   signInWithEmail  from '../pages/api/firebaseSignin'
+import {auth} from '../pages/api/firebase.config'
+import {signInWithEmailAndPassword} from 'firebase/auth'
 
 function LoginForm() {
   // Initialize state for username and password
@@ -10,8 +11,9 @@ function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const userCredential = await signInWithEmail(email, password);
+      // const userCredential = await signInWithEmailAndPassword(auth, email, password);
       // User signed in - userCredential.user will have the signed-in user info
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
       console.log('User signed in:', userCredential.user);
     } catch (error) {
       // Handle Errors here
@@ -22,16 +24,16 @@ function LoginForm() {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-      <div className="card" style={{ width: '22rem' }}>
+      <div className="card custom-border rounded-0 border-3 border-black" style={{ width: '22rem' }}>
         <div className="card-body">
-          <h3 className="card-title text-center mb-4">Login to Your Account</h3>
+          <h1 className="card-title text-center mb-5">Content Moderator</h1>
           {error && <div className="alert alert-danger" role="alert">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
-                className="form-control"
+                className="form-control rounded-0 border-black border-2"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -43,7 +45,7 @@ function LoginForm() {
               <label htmlFor="password" className="form-label">Password</label>
               <input
                 type="password"
-                className="form-control"
+                className="form-control rounded-0 border-black border-2"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -51,12 +53,9 @@ function LoginForm() {
               />
             </div>
             <div className="d-grid gap-2">
-              <button type="submit" className="btn btn-primary btn-lg">Login</button>
+              <button type="submit" className="btn btn-dark btn-lg rounded-0 border-black border-2">Login</button>
             </div>
           </form>
-          <div className="text-center mt-3">
-            <a href="/register" className="link-primary">Register</a> - <a href="/forgot-password" className="link-primary">Forgot Password</a>
-          </div>
         </div>
       </div>
     </div>
