@@ -10,5 +10,7 @@ db = firestore.client()
 
 data = {"name": "Los Angeles", "state": "CA", "country": "USA"}
 
+print("type(data): {}".format(type(data)))
 # Add a new doc in collection 'cities' with ID 'LA'
-db.collection("cities").document("LA").set(data)
+db.collection("messages").document("LA").set(data)
+db.collection("users").document("LA").set(data)
