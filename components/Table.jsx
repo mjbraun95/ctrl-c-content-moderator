@@ -10,6 +10,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import FormatTimestamp from "./FormatTimestamp";
+import DisplayCategories from "./DisplayCategories";
 
 export default function Table() {
   const [data, setData] = useState([]);
@@ -56,10 +57,10 @@ export default function Table() {
               <FormatTimestamp timestamp={row.timestamp} />
               <td className="py-4">
                 {" "}
-                {console.log(row)}
-                <span>Hate Speech 98%</span>
+                <DisplayCategories row={row} />
+                {/* <span>Hate Speech 98%</span>
                 <span> Violence 40%</span>
-                <span>Harrasment 20%</span>{" "}
+                <span>Harrasment 20%</span>{" "} */}
               </td>
 
               <td className="py-4">
