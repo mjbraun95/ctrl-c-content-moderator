@@ -1,6 +1,7 @@
 import os
 import asyncio
 import discord
+
 from discord.ext import commands
 from dotenv import load_dotenv
 import firebase_admin
@@ -11,6 +12,7 @@ from firebase_admin import firestore
 # cred = credentials.Certificate('../firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
 # firebase_admin.initialize_app(cred)
 # db = firestore.client()
+
 
 load_dotenv()
 
