@@ -1,14 +1,10 @@
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+from firebase_admin import credentials, firestore
 from discord.ext import commands, tasks
-import discord
-import openai
 from openai import OpenAI
 import os
 import requests
 import json
-import asyncio
 
 OPENAI_TOKEN = os.environ['openai']
 
@@ -19,7 +15,6 @@ db = firestore.client()
 users_ref = db.collection('users')
 
 
-
 class BanCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -27,40 +22,20 @@ class BanCog(commands.Cog):
         
     def cog_unload(self):
         self.check_database.cancel()
-        
+
     @tasks.loop(seconds=1.0)
     async def check_database(self):
         for guild in self.bot.guilds:
-            #print("guild.members: {}".format(guild.members))
             for member in guild.members:
                 doc_ref = db.collection('users').document(str(member.name))
-                if doc_ref.get().exists and doc_ref.get().to_dict()['timeout_status']:
-                    print(f"TIMEOUT {member.name}")
-                    # doc_ref.set({
-                    #     # 'username': member.name,
-                    #     'discriminator': member.discriminator,
-                    #     'number_of_messages_flagged_with_misinformation': 0, 
-                    #     'number_of_messages_flagged_with_hate_speech': 0,
-                    #     'ban_status': False,
-                    #     'kick_status': False,
-                    #     'timeout_status': False,
-                    # })
-    
-
-        # if user_id and ban_status:
-        #     if ban_status and not data.get('old_data', {}).get('ban_status', False):
-        #         # Ban the user
-        #         guild = self.bot.get_guild(1193291460813013013)  # Replace with your actual Discord guild ID
-        #         user_to_ban = guild.get_member(user_id)
-
-        #         if user_to_ban:
-        #             try:
-        #                 await guild.ban(user_to_ban, reason='User banned due to ban_status change')
-        #                 print(f'User {user_id} banned.')
-        #             except discord.errors.Forbidden:
-        #                 print(f'Error: Missing ban permissions in {guild.name}')
-
-    
+                if doc_ref.get().exists and doc_ref.get().to_dict()['ban_status']:
+                    print(f"BANNING {member.name}")
+                    try:
+                        await member.ban()
+                        print("BANNED!")
+                    except:
+                        print("ERROR BANNING")
+                            
 
 class MessageLogger(commands.Cog):
 
