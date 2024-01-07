@@ -10,7 +10,9 @@ import json
 OPENAI_TOKEN = os.environ['openai']
 
 # Use the service account
-cred = credentials.Certificate('firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+# cred = credentials.Certificate('firebase/ctrl-c-hacked2024-firebase-adminsdk-uevsn-c64338b9d8.json')
+cred = credentials.Certificate('firebase/ctrl-c-hacked2024-2-firebase-adminsdk-z8mgd-604279991b.json')
+
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 users_ref = db.collection('users')
