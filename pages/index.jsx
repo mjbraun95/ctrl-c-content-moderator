@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <div className="container d-flex justify-content-around">
         <LoginForm></LoginForm>
-        <Link href='/dashboard'></Link>
+        <Link href='/dashboard'>Dashboard</Link>
       </div>
     </>
   )
