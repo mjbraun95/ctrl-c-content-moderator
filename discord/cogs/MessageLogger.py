@@ -70,11 +70,14 @@ class MessageLogger(commands.Cog):
             print("guild.members: {}".format(guild.members))
             for member in guild.members:
                 # Store each username in Firestore
-                doc_ref = db.collection('users').document(str(member.id))
-                doc_ref.set({
-                    'username': member.name,
-                    'discriminator': member.discriminator
-                })
+                doc_ref = db.collection('users').document(str(member.name))
+                if not (doc_ref.get()).exists:
+                    doc_ref.set({
+                        # 'username': member.name,
+                        'discriminator': member.discriminator,
+                        'number_of_messages_flagged_with_misinformation': 0, 
+                        'number_of_messages_flagged_with_hate_speech': 0 
+                    })
 async def setup(bot):
   await bot.add_cog(MessageLogger(bot))
             
