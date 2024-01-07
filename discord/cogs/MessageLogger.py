@@ -30,7 +30,9 @@ class MessageLogger(commands.Cog):
     
         message1 = Check(message.content)
         hate_info = message1.hating_info()  # (categories, category_scores, top_three_dict)
-        if hate_info:
+        misinformation_info = message1.misinformation_info()  # (categories, category_scores, top_three_dict)
+        
+        if hate_info != False:
             print("hate_info: {}".format(hate_info))
             print("type(hate_info[0]): {}".format(type(hate_info[0])))
             print("(hate_info[0]): {}".format((hate_info[0])))
@@ -43,6 +45,19 @@ class MessageLogger(commands.Cog):
             message_dict["user_ID"] = message.author.name
             message_dict["message"] = message.content
             message_dict["timestamp"] = str(message.created_at)
+            
+            db.collection("messages").document(message_id).set(message_dict)
+            print("done")
+            
+        elif misinformation_info != True:
+            print("misinformation_info: {}".format(misinformation_info))
+            message_dict = dict()
+            message_id = str(message.created_at)
+            print("message_id: {}", message_id)
+            message_dict["user_ID"] = message.author.name
+            message_dict["message"] = message.content
+            message_dict["timestamp"] = str(message.created_at)
+            message_dict["misinformation"] = "True"
             
             db.collection("messages").document(message_id).set(message_dict)
             print("done")
@@ -115,7 +130,7 @@ class Check:
 
             return (categories, category_scores, top_three_dict, self.message, self.response)
         
-    def information_info(self):
+    def misinformation_info(self):
         
         url = "https://api.openai.com/v1/chat/completions"
 
