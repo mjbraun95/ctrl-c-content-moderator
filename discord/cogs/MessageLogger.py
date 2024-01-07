@@ -32,17 +32,11 @@ class MessageLogger(commands.Cog):
         if hate_info:
             # categories, category_scores, top_three_dict
             print("hate_info: {}".format(hate_info))
-            # print("type(hate_info): {}".format(type(hate_info)))
             print("type(hate_info[0]): {}".format(type(hate_info[0])))
-            # print("type(hate_info[1]): {}".format(type(hate_info[1])))
-            # print("type(hate_info[2]): {}".format(type(hate_info[2])))
             print("(hate_info[0]): {}".format((hate_info[0])))
-            # print("(hate_info[1]): {}".format((hate_info[1])))
-            # print("(hate_info[2]): {}".format((hate_info[2])))
             sample_dict = dict()
             message_id = str(uuid.uuid4())
             print("message_id: {}", message_id)
-            # print(type("message_id: {}".format(message_id)))
             sample_dict["categories"] = hate_info[0]
             sample_dict["category_scores"] = hate_info[1]
             sample_dict["top_three_dict"] = hate_info[2]
@@ -52,6 +46,7 @@ class MessageLogger(commands.Cog):
             # print("type(message.author.name): {}".format(type(message.author.name)))
             sample_dict["user_ID"] = message.author.name
             sample_dict["message"] = message.content
+            sample_dict["timestamp"] = str(message.created_at)
             # print("sample_dict: {}".format(sample_dict))
             # print(type(sample_dict))
             
