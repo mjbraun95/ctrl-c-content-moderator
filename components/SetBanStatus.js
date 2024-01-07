@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { app, db } from "../pages/api/firebase.config.js"; // Import Firestore instance
+import { db } from "../pages/api/firebase.config.js"; // Import Firestore instance
 import { doc, getDoc, updateDoc } from "firebase/firestore"; // Firestore functions
 import { faXmarkCircle } from "@fortawesome/free-solid-svg-icons";
 

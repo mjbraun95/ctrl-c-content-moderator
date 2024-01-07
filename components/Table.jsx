@@ -72,11 +72,14 @@ export default function Table() {
               </td>
               
               */}
-              <SetBanStatus user={row.username} />
+              <SetBanStatus username={row.username} />
               <td className="py-4">
-                <FontAwesomeIcon onClick={()=>{
-                  console.log(row)
-                }} icon={faPersonWalkingArrowRight} />
+                <FontAwesomeIcon
+                  onClick={() => {
+                    console.log(row);
+                  }}
+                  icon={faPersonWalkingArrowRight}
+                />
               </td>
               <td className="py-4">
                 <FontAwesomeIcon icon={faStopwatch} />
