@@ -74,6 +74,28 @@ class BanCog(commands.Cog):
                         except Exception as e:
                             print(e)
                             print("ERROR TIMING OUT")
+        # # Specify the collection reference and the field to filter on
+        collection_ref = db.collection('messages')
+        field_name = 'mod_deleted'
+
+        # Query for documents where the specified field is true
+        query = collection_ref.where(field_name, '==', True).stream()
+
+        # Iterate through the documents
+        for document in query:
+            # Access document data using .to_dict()
+            data = document.to_dict()
+            message_id = data["message_id"]
+            print(f"Document ID: {message_id}, Field Value: {data[field_name]}")
+            # if data[field_name]:
+            channel_id = 1193291460813013016  # Replace with your channel ID
+            channel = self.bot.get_channel(channel_id)
+            msg = await channel.fetch_message(message_id)
+            await msg.delete()
+            print("DELETED MESSAGE")
+            db.collection("messages").document(document.id).delete()
+            print("DELETED DOCUMENT")
+            # doc_ref = db.collection('messages').document(document.id)
                             
 
 class MessageLogger(commands.Cog):
@@ -102,6 +124,8 @@ class MessageLogger(commands.Cog):
             message_dict["categories"] = hate_info[0]
             message_dict["category_scores"] = hate_info[1]
             message_dict["top_three_dict"] = hate_info[2]
+            message_dict["mod_deleted"] = False
+            message_dict["message_id"] = message.id
             # message_dict["1st_violation_percentage"] = hate_info[3]
             # message_dict["2nd_violation_percentage"] = hate_info[4]
             # message_dict["3rd_violation_percentage"] = hate_info[5]
@@ -120,6 +144,7 @@ class MessageLogger(commands.Cog):
         #     message_dict["message"] = message.content
         #     message_dict["timestamp"] = str(message.created_at)
         #     message_dict["misinformation"] = "True"
+        #     message_dict["mod_deleted"] = False
         #     db.collection("messages").document(message_id).set(message_dict)
         #     #print("misinformation message logged")
             
@@ -156,7 +181,10 @@ class MessageLogger(commands.Cog):
                 'id': member.id,
                 'discriminator': member.discriminator,
                 'number_of_messages_flagged_with_misinformation': 0, 
-                'number_of_messages_flagged_with_hate_speech': 0 
+                'number_of_messages_flagged_with_hate_speech': 0,
+                'ban_status': False,
+                'ban_status': False,
+                'ban_status': False,
             })
     
 async def setup(bot):
